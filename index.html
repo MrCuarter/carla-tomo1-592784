@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Antes de que llegaras · Cuentos de Carla</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&display=swap">
+<style>
+:root{--mesa:#2A2724;--papel:#FAF6EE;--tinta:#EDE7DC;--suave:#9A9186;--linea:#443F39}
+*{box-sizing:border-box}
+body{margin:0;background:var(--mesa);overflow:hidden}
+#app{height:100dvh;background:var(--mesa);color:var(--tinta);
+  font:400 15px/1.5 Archivo,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  display:flex;flex-direction:column;
+  -webkit-user-select:none;user-select:none}
+header{padding:14px 18px 10px;text-align:center;flex:0 0 auto}
+header h1{margin:0;font-size:16px;font-weight:600;letter-spacing:.01em}
+header p{margin:3px 0 0;font-size:12px;color:var(--suave)}
+#escena{flex:1 1 auto;display:flex;align-items:center;justify-content:center;
+  padding:0 14px;min-height:0}
+#libro{position:relative;display:flex;perspective:2600px;
+  filter:drop-shadow(0 18px 40px rgba(0,0,0,.45))}
+.hoja{position:relative;background:var(--papel);overflow:hidden;flex:0 0 auto}
+.hoja img{width:100%;height:100%;display:block;object-fit:cover}
+#lomo{position:absolute;top:0;bottom:0;left:50%;width:26px;transform:translateX(-50%);
+  background:linear-gradient(90deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.20) 44%,
+  rgba(0,0,0,.28) 50%,rgba(0,0,0,.20) 56%,rgba(0,0,0,0) 100%);
+  pointer-events:none;z-index:6}
+#gira{position:absolute;top:0;z-index:8;transform-style:preserve-3d;
+  transition:transform .62s cubic-bezier(.42,0,.35,1);will-change:transform;
+  pointer-events:none;visibility:hidden}
+#gira .cara{position:absolute;inset:0;backface-visibility:hidden;overflow:hidden;
+  background:var(--papel)}
+#gira .cara img{width:100%;height:100%;display:block;object-fit:cover}
+#gira .dorso{transform:rotateY(180deg)}
+#gira .sombra{position:absolute;inset:0;background:rgba(0,0,0,.30);opacity:0;
+  transition:opacity .62s;pointer-events:none}
+nav{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:16px;
+  padding:12px 18px calc(14px + env(safe-area-inset-bottom))}
+button{background:transparent;color:var(--tinta);border:1px solid var(--linea);
+  border-radius:999px;padding:9px 16px;font:500 14px Archivo,sans-serif;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--suave)}
+button:disabled{opacity:.3;cursor:default}
+button:focus-visible{outline:2px solid #7FB0DC;outline-offset:2px}
+#donde{font:500 13px/1 Archivo,sans-serif;color:var(--suave);min-width:8ch;
+  text-align:center;font-variant-numeric:tabular-nums}
+#indice{position:fixed;inset:auto 0 0 0;background:#211E1C;border-top:1px solid var(--linea);
+  padding:14px 18px calc(18px + env(safe-area-inset-bottom));
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  transform:translateY(101%);transition:transform .3s;z-index:20;max-height:52vh;overflow:auto}
+#indice.abierto{transform:none}
+#indice button{font-size:13px;padding:8px 13px}
+#pista{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);
+  background:rgba(0,0,0,.6);border-radius:999px;padding:7px 15px;font-size:12.5px;
+  color:var(--tinta);transition:opacity .5s;pointer-events:none}
+@media (max-width:700px){ #lomo{display:none} }
+@media (prefers-reduced-motion:reduce){
+  #gira{transition-duration:.01ms} #gira .sombra{transition-duration:.01ms}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+  <h1>Antes de que llegaras</h1>
+  <p>Cuentos de Carla · Tomo 1</p>
+</header>
+
+<div id="escena">
+  <div id="libro">
+    <div class="hoja" id="izq"><img alt=""></div>
+    <div class="hoja" id="der"><img alt=""></div>
+    <div id="lomo"></div>
+    <div id="gira">
+      <div class="cara frente"><img alt=""><div class="sombra"></div></div>
+      <div class="cara dorso"><img alt=""><div class="sombra"></div></div>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <button type="button" id="atras">‹ Atrás</button>
+  <span id="donde"></span>
+  <button type="button" id="alante">Siguiente ›</button>
+  <button type="button" id="verIndice">Índice</button>
+</nav>
+
+<div id="indice"><button type="button" data-p="0">Portada</button><button type="button" data-p="8">1. El día que lo supimos</button><button type="button" data-p="30">2. ¿Cómo serás?</button><button type="button" data-p="48">3. Gusi</button><button type="button" data-p="70">4. Tu casa te esperaba</button><button type="button" data-p="88">5. La foto de la lengua</button><button type="button" data-p="106">6. Mamá estudia</button><button type="button" data-p="128">7. El último verano</button><button type="button" data-p="150">8. El diez de agosto</button><button type="button" data-p="172">Cierre</button><button type="button" data-p="176">Contraportada</button></div>
+<div id="pista">Desliza o usa las flechas</div>
+</div>
+
+<script>
+const FUENTES = ["img/p000.jpg", "img/p001.jpg", "img/p002.jpg", "img/p003.jpg", "img/p004.jpg", "img/p005.jpg", "img/p006.jpg", "img/p007.jpg", "img/p008.jpg", "img/p009.jpg", "img/p010.jpg", "img/p011.jpg", "img/p012.jpg", "img/p013.jpg", "img/p014.jpg", "img/p015.jpg", "img/p016.jpg", "img/p017.jpg", "img/p018.jpg", "img/p019.jpg", "img/p020.jpg", "img/p021.jpg", "img/p022.jpg", "img/p023.jpg", "img/p024.jpg", "img/p025.jpg", "img/p026.jpg", "img/p027.jpg", "img/p028.jpg", "img/p029.jpg", "img/p030.jpg", "img/p031.jpg", "img/p032.jpg", "img/p033.jpg", "img/p034.jpg", "img/p035.jpg", "img/p036.jpg", "img/p037.jpg", "img/p038.jpg", "img/p039.jpg", "img/p040.jpg", "img/p041.jpg", "img/p042.jpg", "img/p043.jpg", "img/p044.jpg", "img/p045.jpg", "img/p046.jpg", "img/p047.jpg", "img/p048.jpg", "img/p049.jpg", "img/p050.jpg", "img/p051.jpg", "img/p052.jpg", "img/p053.jpg", "img/p054.jpg", "img/p055.jpg", "img/p056.jpg", "img/p057.jpg", "img/p058.jpg", "img/p059.jpg", "img/p060.jpg", "img/p061.jpg", "img/p062.jpg", "img/p063.jpg", "img/p064.jpg", "img/p065.jpg", "img/p066.jpg", "img/p067.jpg", "img/p068.jpg", "img/p069.jpg", "img/p070.jpg", "img/p071.jpg", "img/p072.jpg", "img/p073.jpg", "img/p074.jpg", "img/p075.jpg", "img/p076.jpg", "img/p077.jpg", "img/p078.jpg", "img/p079.jpg", "img/p080.jpg", "img/p081.jpg", "img/p082.jpg", "img/p083.jpg", "img/p084.jpg", "img/p085.jpg", "img/p086.jpg", "img/p087.jpg", "img/p088.jpg", "img/p089.jpg", "img/p090.jpg", "img/p091.jpg", "img/p092.jpg", "img/p093.jpg", "img/p094.jpg", "img/p095.jpg", "img/p096.jpg", "img/p097.jpg", "img/p098.jpg", "img/p099.jpg", "img/p100.jpg", "img/p101.jpg", "img/p102.jpg", "img/p103.jpg", "img/p104.jpg", "img/p105.jpg", "img/p106.jpg", "img/p107.jpg", "img/p108.jpg", "img/p109.jpg", "img/p110.jpg", "img/p111.jpg", "img/p112.jpg", "img/p113.jpg", "img/p114.jpg", "img/p115.jpg", "img/p116.jpg", "img/p117.jpg", "img/p118.jpg", "img/p119.jpg", "img/p120.jpg", "img/p121.jpg", "img/p122.jpg", "img/p123.jpg", "img/p124.jpg", "img/p125.jpg", "img/p126.jpg", "img/p127.jpg", "img/p128.jpg", "img/p129.jpg", "img/p130.jpg", "img/p131.jpg", "img/p132.jpg", "img/p133.jpg", "img/p134.jpg", "img/p135.jpg", "img/p136.jpg", "img/p137.jpg", "img/p138.jpg", "img/p139.jpg", "img/p140.jpg", "img/p141.jpg", "img/p142.jpg", "img/p143.jpg", "img/p144.jpg", "img/p145.jpg", "img/p146.jpg", "img/p147.jpg", "img/p148.jpg", "img/p149.jpg", "img/p150.jpg", "img/p151.jpg", "img/p152.jpg", "img/p153.jpg", "img/p154.jpg", "img/p155.jpg", "img/p156.jpg", "img/p157.jpg", "img/p158.jpg", "img/p159.jpg", "img/p160.jpg", "img/p161.jpg", "img/p162.jpg", "img/p163.jpg", "img/p164.jpg", "img/p165.jpg", "img/p166.jpg", "img/p167.jpg", "img/p168.jpg", "img/p169.jpg", "img/p170.jpg", "img/p171.jpg", "img/p172.jpg", "img/p173.jpg", "img/p174.jpg", "img/p175.jpg", "img/p176.jpg", "img/p177.jpg"];
+const AUTONOMA = false;
+const src = i => AUTONOMA ? FUENTES[i] : FUENTES[i];
+
+const libro = document.getElementById('libro');
+const izq = document.querySelector('#izq img');
+const der = document.querySelector('#der img');
+const gira = document.getElementById('gira');
+const frente = document.querySelector('#gira .frente img');
+const dorso = document.querySelector('#gira .dorso img');
+const sombras = document.querySelectorAll('#gira .sombra');
+const donde = document.getElementById('donde');
+const bAtras = document.getElementById('atras');
+const bAlante = document.getElementById('alante');
+const pista = document.getElementById('pista');
+const indice = document.getElementById('indice');
+
+let i = 0;              // índice de la página izquierda
+let doble = true;       // dos páginas o una
+let animando = false;
+
+function mide() {
+  const escena = document.getElementById('escena');
+  doble = window.innerWidth >= 700;
+  const dispAlto = escena.clientHeight - 8;
+  const dispAncho = escena.clientWidth - 8;
+  const lado = Math.floor(Math.min(dispAlto, dispAncho / (doble ? 2 : 1)));
+  for (const h of document.querySelectorAll('.hoja')) {
+    h.style.width = lado + 'px'; h.style.height = lado + 'px';
+  }
+  document.getElementById('der').style.display = doble ? 'block' : 'none';
+  gira.style.width = lado + 'px';
+  gira.style.height = lado + 'px';
+  gira.style.left = doble ? lado + 'px' : '0px';
+  gira.style.transformOrigin = doble ? 'left center' : 'left center';
+  pinta();
+}
+
+function pinta() {
+  if (!doble && i % 2) i--;
+  izq.src = src(i) || '';
+  if (doble) der.src = src(i + 1) || '';
+  const total = FUENTES.length;
+  const hasta = doble ? Math.min(i + 2, total) : i + 1;
+  donde.textContent = (doble && i + 1 < total)
+      ? `${i + 1}–${hasta} / ${total}` : `${i + 1} / ${total}`;
+  bAtras.disabled = i <= 0;
+  bAlante.disabled = i >= total - (doble ? 2 : 1);
+}
+
+function pasa(dir) {
+  const salto = doble ? 2 : 1;
+  const destino = i + dir * salto;
+  if (animando || destino < 0 || destino > FUENTES.length - salto) return;
+  if (!doble) { i = destino; pinta(); return; }
+  animando = true;
+  if (dir > 0) {
+    frente.src = src(i + 1) || '';
+    dorso.src = src(i + 2) || '';
+    gira.style.transition = 'none';
+    gira.style.transform = 'rotateY(0deg)';
+    gira.style.visibility = 'visible';
+    requestAnimationFrame(() => {
+      gira.style.transition = '';
+      gira.style.transform = 'rotateY(-180deg)';
+      sombras[0].style.opacity = 1;
+    });
+  } else {
+    frente.src = src(i - 1) || '';
+    dorso.src = src(i) || '';
+    gira.style.transition = 'none';
+    gira.style.transform = 'rotateY(-180deg)';
+    gira.style.visibility = 'visible';
+    sombras[0].style.opacity = 1;
+    requestAnimationFrame(() => {
+      gira.style.transition = '';
+      gira.style.transform = 'rotateY(0deg)';
+      sombras[0].style.opacity = 0;
+    });
+  }
+  setTimeout(() => {
+    i = destino;
+    pinta();
+    gira.style.visibility = 'hidden';
+    sombras.forEach(s => s.style.opacity = 0);
+    animando = false;
+  }, 620);
+}
+
+bAlante.addEventListener('click', () => pasa(1));
+bAtras.addEventListener('click', () => pasa(-1));
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); pasa(1); }
+  if (e.key === 'ArrowLeft') pasa(-1);
+  if (e.key === 'Escape') indice.classList.remove('abierto');
+});
+libro.addEventListener('click', e => {
+  const r = libro.getBoundingClientRect();
+  pasa(e.clientX - r.left > r.width / 2 ? 1 : -1);
+});
+
+let x0 = null;
+libro.addEventListener('touchstart', e => x0 = e.touches[0].clientX, {passive:true});
+libro.addEventListener('touchend', e => {
+  if (x0 === null) return;
+  const dx = e.changedTouches[0].clientX - x0;
+  if (Math.abs(dx) > 40) pasa(dx < 0 ? 1 : -1);
+  x0 = null;
+}, {passive:true});
+
+document.getElementById('verIndice').addEventListener('click',
+  () => indice.classList.toggle('abierto'));
+indice.addEventListener('click', e => {
+  const b = e.target.closest('button[data-p]');
+  if (!b) return;
+  i = parseInt(b.dataset.p, 10);
+  if (doble && i % 2) i--;
+  pinta();
+  indice.classList.remove('abierto');
+});
+
+window.addEventListener('resize', mide);
+mide();
+setTimeout(() => pista.style.opacity = 0, 3800);
+</script>
+</body>
+</html>
