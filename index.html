@@ -126,12 +126,24 @@ function mide() {
   gira.style.width = lado + 'px';
   gira.style.height = lado + 'px';
   gira.style.left = doble ? lado + 'px' : '0px';
-  gira.style.transformOrigin = doble ? 'left center' : 'left center';
+  gira.style.transformOrigin = 'left center';
+  avisa();
   pinta();
 }
 
+let tPista = null;
+function avisa() {
+  const vertical = window.matchMedia && window.matchMedia('(orientation: portrait)').matches;
+  pista.textContent = (!doble && vertical)
+      ? 'Gira el móvil para ver el libro abierto. Toca o desliza para pasar página.'
+      : 'Desliza o usa las flechas';
+  pista.style.opacity = 1;
+  clearTimeout(tPista);
+  tPista = setTimeout(() => pista.style.opacity = 0, (!doble && vertical) ? 6000 : 3800);
+}
+
 function pinta() {
-  if (!doble && i % 2) i--;
+  if (doble && i % 2) i--;
   izq.src = src(i) || '';
   if (doble) der.src = src(i + 1) || '';
   const total = FUENTES.length;
@@ -188,7 +200,9 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') pasa(-1);
   if (e.key === 'Escape') indice.classList.remove('abierto');
 });
+let ignoraClic = false;
 libro.addEventListener('click', e => {
+  if (ignoraClic) return;
   const r = libro.getBoundingClientRect();
   pasa(e.clientX - r.left > r.width / 2 ? 1 : -1);
 });
@@ -198,7 +212,7 @@ libro.addEventListener('touchstart', e => x0 = e.touches[0].clientX, {passive:tr
 libro.addEventListener('touchend', e => {
   if (x0 === null) return;
   const dx = e.changedTouches[0].clientX - x0;
-  if (Math.abs(dx) > 40) pasa(dx < 0 ? 1 : -1);
+  if (Math.abs(dx) > 40) { pasa(dx < 0 ? 1 : -1); ignoraClic = true; setTimeout(() => ignoraClic = false, 500); }
   x0 = null;
 }, {passive:true});
 
@@ -222,7 +236,7 @@ if (window.ResizeObserver) new ResizeObserver(mide).observe(document.getElementB
   mide();
   if (document.getElementById('escena').clientHeight < 40 && n < 60) setTimeout(() => espera(n + 1), 100);
 })(0);
-setTimeout(() => pista.style.opacity = 0, 3800);
+
 </script>
 </body>
 </html>
