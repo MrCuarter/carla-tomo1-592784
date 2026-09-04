@@ -214,7 +214,14 @@ indice.addEventListener('click', e => {
 });
 
 window.addEventListener('resize', mide);
-mide();
+window.addEventListener('load', mide);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(mide);
+// Dentro del visor de artefactos el marco puede medir 0 al arrancar y crecer después.
+if (window.ResizeObserver) new ResizeObserver(mide).observe(document.getElementById('escena'));
+(function espera(n) {
+  mide();
+  if (document.getElementById('escena').clientHeight < 40 && n < 60) setTimeout(() => espera(n + 1), 100);
+})(0);
 setTimeout(() => pista.style.opacity = 0, 3800);
 </script>
 </body>
